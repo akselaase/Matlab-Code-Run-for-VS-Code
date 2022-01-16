@@ -15,7 +15,10 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onLanguage:matlab"
+		"onLanguage:matlab",
+		"onCommand:matlab-code-runner.runMatlabFile",
+		"onCommand:matlab-code-runner.runMatlabSelection",
+		"onCommand:matlab-code-runner.runMatlabSection"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
