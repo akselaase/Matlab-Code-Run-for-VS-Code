@@ -28,6 +28,10 @@ export default class MatlabTerminal {
         this.terminal.show(true);
     }
 
+    public runCode(code: string) {
+        this.runRawCode(code);
+    }
+
     public runFile(absFilePath: string) {
         if (!absFilePath.includes(this.workspaceDirectoryPath)) {
             vscode.window.showInformationMessage("File not found in workspace!");

@@ -26,7 +26,23 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		});
 
-		context.subscriptions.push(cmdRunMatlab);
+		let cmdRunSelection = vscode.commands.registerCommand('matlab-code-runner.runMatlabSelection', () => {
+			const editor = vscode.window.activeTextEditor;
+			if (editor) {
+				let code = '';
+				let lastLine = editor.selection.start.line;
+				for (const selection of editor.selections) {
+					if (selection.start.line != lastLine) {
+						code += '\r\n';
+					}
+					code += editor.document.getText(selection);
+					lastLine = selection.end.line;
+				}
+				getTerminal().runCode(code);
+			}
+		});
+
+		context.subscriptions.push(cmdRunMatlab, cmdRunSelection);
 	}
 }
 
