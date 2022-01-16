@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import MatlabDocument from './MatlabDocument';
 import MatlabTerminal from './MatlabTerminal';
 
 function createMatlabTerminal(workspaceDirectoryPath: string): MatlabTerminal {
@@ -42,7 +43,23 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		});
 
-		context.subscriptions.push(cmdRunMatlab, cmdRunSelection);
+		let cmdRunSection = vscode.commands.registerCommand('matlab-code-runner.runMatlabSection', () => {
+			const editor = vscode.window.activeTextEditor;
+			if (editor) {
+				let doc = new MatlabDocument(editor.document);
+				let code = '';
+				for (const section of doc.sections) {
+					for (const selection of editor.selections) {
+						if (section.intersection(selection)) {
+							code += editor.document.getText(section) + '\r\n';
+						}
+					}
+				}
+				getTerminal().runCode(code);
+			}
+		});
+
+		context.subscriptions.push(cmdRunMatlab, cmdRunSelection, cmdRunSection);
 	}
 }
 

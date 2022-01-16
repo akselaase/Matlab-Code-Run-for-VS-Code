@@ -27,6 +27,10 @@
 			{
 				"command": "matlab-code-runner.runMatlabSelection",
 				"title": "Run Matlab Selection"
+			},
+			{
+				"command": "matlab-code-runner.runMatlabSection",
+				"title": "Run Matlab Section"
 			}
 		]
 	},
