@@ -1,31 +1,55 @@
 import * as vscode from 'vscode';
 
-export default class MatlabTerminal {
+class TerminalWrapper {
 
-    public terminal: vscode.Terminal;
-    private hasInitializedTerminal: boolean = false;
+    private name: string;
+    private startupFolder?: string;
+
+    private terminal: vscode.Terminal | null;
 
     readonly matlabCommand: string = "matlab";
     private noSplashArg: string = "-nosplash";
     private noDesktopArg: string = "-nodesktop";
+
+    constructor(name: string, startupFolder?: string) {
+        this.name = name;
+        this.startupFolder = startupFolder;
+        this.terminal = this.createTerminal();
+    }
+
+    public get() {
+        if (!this.terminal || this.terminal.exitStatus) {
+            this.terminal = this.createTerminal();
+        }
+        return this.terminal;
+    }
+
+    private createTerminal() {
+        let cmd = `${this.matlabCommand} ${this.noSplashArg} ${this.noDesktopArg} `;
+
+        if (this.startupFolder) {
+            cmd += `-sd ${this.startupFolder}`;
+        }
+
+        const term = vscode.window.createTerminal(this.name);
+        term.sendText(cmd);
+        return term;
+    }
+}
+
+export default class MatlabTerminal {
+    private terminal: TerminalWrapper;
     private workspaceDirectoryPath: string;
 
     constructor(workspaceDirectoryPath: string) {
-        this.terminal = vscode.window.createTerminal("Matlab");
+        this.terminal = new TerminalWrapper("Matlab", workspaceDirectoryPath);
         this.workspaceDirectoryPath = workspaceDirectoryPath;
     }
 
-    private initTerminal() {
-        if (!this.hasInitializedTerminal) {
-            this.terminal.sendText(`${this.matlabCommand} ${this.noSplashArg} ${this.noDesktopArg} -sd ${this.workspaceDirectoryPath}`);
-            this.hasInitializedTerminal = true;
-        }
-    }
-
     private runRawCode(code: string) {
-        this.initTerminal();
-        this.terminal.sendText(code, true);
-        this.terminal.show(true);
+        const term = this.terminal.get();
+        term.sendText(code, true);
+        term.show();
     }
 
     public runCode(code: string) {
@@ -43,11 +67,5 @@ export default class MatlabTerminal {
         }
         const relativeFilePath = "." + absFilePath.replace(this.workspaceDirectoryPath, "");
         this.runRawCode(`run('${relativeFilePath}')`);
-    }
-
-    public getCurrentWorkspaceDirectory = () => this.workspaceDirectoryPath;
-    public changeWorkspaceDirectory(dir: string) {
-        this.terminal.sendText(`cd ${dir}`);
-        this.workspaceDirectoryPath = dir;
     }
 }
