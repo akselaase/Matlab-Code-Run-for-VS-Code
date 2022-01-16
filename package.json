@@ -21,7 +21,7 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.runMatlab",
+				"command": "matlab-code-runner.runMatlabFile",
 				"title": "Run Matlab File"
 			}
 		]

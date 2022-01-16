@@ -12,18 +12,21 @@ export function activate(context: vscode.ExtensionContext) {
 		const rootWorkspaceFolderPath = workspaceFoldersPaths[0];
 		let matlabTerminal = createMatlabTerminal(rootWorkspaceFolderPath.uri.fsPath);
 
-		let disposable = vscode.commands.registerCommand('extension.runMatlab', () => {
+		let getTerminal = () => {
 			if (!matlabTerminal) {
 				matlabTerminal = createMatlabTerminal(rootWorkspaceFolderPath.uri.fsPath);
 			}
+			return matlabTerminal;
+		};
+
+		let cmdRunMatlab = vscode.commands.registerCommand('matlab-code-runner.runMatlabFile', () => {
 			if (vscode.window.activeTextEditor) {
 				const fileToRunPath = vscode.window.activeTextEditor.document;
-				matlabTerminal.runFile(fileToRunPath.uri.fsPath);
-				
+				getTerminal().runFile(fileToRunPath.uri.fsPath);
 			}
 		});
-	
-		context.subscriptions.push(disposable);
+
+		context.subscriptions.push(cmdRunMatlab);
 	}
 }
 
