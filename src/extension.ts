@@ -3,7 +3,7 @@ import MatlabDocument from './MatlabDocument';
 import MatlabTerminal from './MatlabTerminal';
 
 function createMatlabTerminal(workspaceDirectoryPath: string): MatlabTerminal {
-	vscode.window.showInformationMessage("Working Directory set to: " + workspaceDirectoryPath);
+	console.log("Working Directory set to ", workspaceDirectoryPath);
 	return new MatlabTerminal(workspaceDirectoryPath);
 }
 
@@ -63,4 +63,4 @@ export function activate(context: vscode.ExtensionContext) {
 	}
 }
 
-export function deactivate() {}
+export function deactivate() { }
