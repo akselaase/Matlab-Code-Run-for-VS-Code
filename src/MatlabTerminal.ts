@@ -3,8 +3,7 @@ import * as vscode from 'vscode';
 export default class MatlabTerminal {
 
     public terminal: vscode.Terminal;
-
-    private hasExecutedOnce: boolean = false;
+    private hasInitializedTerminal: boolean = false;
 
     readonly matlabCommand: string = "matlab";
     private noSplashArg: string = "-nosplash";
@@ -14,6 +13,19 @@ export default class MatlabTerminal {
     constructor(workspaceDirectoryPath: string) {
         this.terminal = vscode.window.createTerminal("Matlab");
         this.workspaceDirectoryPath = workspaceDirectoryPath;
+    }
+
+    private initTerminal() {
+        if (!this.hasInitializedTerminal) {
+            this.terminal.sendText(`${this.matlabCommand} ${this.noSplashArg} ${this.noDesktopArg} -sd ${this.workspaceDirectoryPath}`);
+            this.hasInitializedTerminal = true;
+        }
+    }
+
+    private runRawCode(code: string) {
+        this.initTerminal();
+        this.terminal.sendText(code, true);
+        this.terminal.show(true);
     }
 
     public runFile(absFilePath: string) {
@@ -26,17 +38,7 @@ export default class MatlabTerminal {
             return;
         }
         const relativeFilePath = "." + absFilePath.replace(this.workspaceDirectoryPath, "");
-        if (!this.hasExecutedOnce) {
-            this.terminal.sendText(`${this.matlabCommand} ${this.noSplashArg} ${this.noDesktopArg} -sd ${this.workspaceDirectoryPath} -r "run('${relativeFilePath}');"`);
-            this.hasExecutedOnce = true;
-        } else {
-            if (process.platform === 'win32') {
-                this.terminal.sendText(`${this.matlabCommand} ${this.noSplashArg} ${this.noDesktopArg} -r "run('${relativeFilePath}');"`);
-            } else {
-                this.terminal.sendText(`run('${relativeFilePath}')`);
-            }
-        }
-        this.terminal.show(true);
+        this.runRawCode(`run('${relativeFilePath}')`);
     }
 
     public getCurrentWorkspaceDirectory = () => this.workspaceDirectoryPath;
