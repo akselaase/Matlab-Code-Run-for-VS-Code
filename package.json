@@ -1,10 +1,13 @@
 {
-	"name": "matlab-code-run",
-	"displayName": "Matlab Code Run",
-	"description": "Enables code execution in VS Code via integrated terminal",
-	"version": "1.0.1",
-	"repository": {"url": "https://github.com/bramvbilsen/Matlab-Code-Run-for-VS-Code", "type": "GitHub"},
-	"publisher": "bramvanbilsen",
+	"name": "matlab-code-runner",
+	"displayName": "Matlab Code Runner",
+	"description": "Enables Matlab code execution from VS Code.",
+	"version": "1.0.0",
+	"repository": {
+		"url": "https://github.com/akselaase/Matlab-Code-Run-for-VS-Code",
+		"type": "GitHub"
+	},
+	"publisher": "akselaase",
 	"engines": {
 		"vscode": "^1.32.0"
 	},
